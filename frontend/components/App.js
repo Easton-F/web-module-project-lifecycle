@@ -13,6 +13,20 @@ export default class App extends React.Component {
     const { value } = e.target
     this.setState({ ...this.state, todoNameInput: value })
   }
+  postNewTodo = () => {
+    axios.post(URL, { name: this.state.todoNameInput })
+    .then(res => {
+      this.fetchAllTodos();
+      this.setState({ ...this.state, todoNameInput: '' })
+    })
+    .catch(err => {
+      this.setState({ ...this.state, error: err.response.data.message })
+    })
+  }
+  onTodoFormSubmit = e => {
+    e.preventDefault();
+    this.postNewTodo();
+  }
   fetchAllTodos = () => {
     axios.get(URL)
     .then(res => {
@@ -37,7 +51,7 @@ export default class App extends React.Component {
               })
             }
         </div>
-        <form id='todoForm'>
+        <form id='todoForm' onSubmit={this.onTodoFormSubmit}>
           <input value={this.state.todoNameInput} onChange={this.onInputChange} type='text' placeholder='Type todo'></input>
           <input type='submit'></input>
           <button>Clear Completed</button>
